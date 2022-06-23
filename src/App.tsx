@@ -1,24 +1,61 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+
+import { MdDelete } from "react-icons/md";
+
+import { useStore } from "./todoStore";
 
 function App() {
+  const [todoText, setTodoText] = useState("");
+  const { addTodo, removeTodo, toggleCompletedState, todos } = useStore();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h3>To-Do's</h3>
+      <input
+        placeholder="Todo Description"
+        required
+        onChange={(e) => setTodoText(e.target.value)}
+        value={todoText}
+      />
+      <button
+        color="primary"
+        onClick={() => {
+          if (todoText.length) {
+            addTodo(todoText);
+            setTodoText("");
+          }
+        }}
+      >
+        Add Item
+      </button>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>
+            <span>
+              <input
+                type="checkbox"
+                checked={todo.completed}
+                onChange={() => toggleCompletedState(todo.id)}
+              />
+            </span>
+            <p
+              className={todo.completed ? "completedTodoStyles" : ""}
+              key={todo.id}
+            >
+              {todo.description}
+            </p>
+            <span>
+              <div
+                onClick={() => {
+                  removeTodo(todo.id);
+                }}
+              >
+                <MdDelete />
+              </div>
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
